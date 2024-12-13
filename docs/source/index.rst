@@ -10,7 +10,7 @@ Bsp开发小记
    :maxdepth: 2
    :caption: Contents:
 
-   boot.md
+   TEE.md
 
 Indices and tables
 ==================
