@@ -9,7 +9,7 @@ ATF冷启动实现分为5个步骤:
 - BL32: Secure-EL1 Payload, 一般为Tee OS Image
 - BL33: Non-Trust Firmware, 一般为uboot，linux kernel
 
-**注解： ATF输出BL1, BL2, BL3, 并提供BL32和BL33接口**
+**注解: ATF输出BL1, BL2, BL3, 并提供BL32和BL33接口**
 
 启动流程如下：
 ![启动流程图](_static/atf_start.png)
@@ -55,7 +55,8 @@ BL31位于 SRAM 中， EL3 模式，除了做架构初始化和平台初始化�
 ![Alt text](_static/image-1.png)
 ![Alt text](_static/image-2.png)
 ### 1.2 optee笔记
-#### optee官方在线文档: https://optee.readthedocs.io/en/latest/index.html
+
+[optee官方在线文档](https://optee.readthedocs.io/en/latest/index.html)
 #### 1.2.1 optee概述
 ##### 1.2.1.1 TEE如何保证数据安全
 在没有集成trustzone的环境有一个风险就是当获取root权限之后，就可以随意访问所有的数据，这样的操作十分危险．为了保障这一部分数据在root权限下不被轻松获取， 因此在硬件层引入了trustzone技术
@@ -84,7 +85,7 @@ OP-TEE是开源的TEE解决方案，下面以ubuntu 20.04为例搭建其仿真�
 ###### 1.2.1.3.1 环境准备
 - 安装环境依赖
 
-`
+```
 sudo apt update && apt upgrade -y
 sudo apt install -y \
 android-tools-adb \
@@ -135,10 +136,12 @@ wget \
 xdg-utils \
 xterm \
 xz-utils \
-zlib1g-dev`
+zlib1g-dev
+```
 
 ###### 1.2.1.3.2 准备和编译
-`mkdir optee && cd optee
+```
+mkdir optee && cd optee
 curl https://mirrors.tuna.tsinghua.edu.cn/git/git-repo -o ~/bin/repo
 chmod a+x ~/bin/repo
 export PATH=~/bin:$PATH
@@ -151,7 +154,8 @@ repo sync
 cd ./build
 make -j8 toolchains
 make -f qemu_v8.mk all -j8
-make -f qemu_v8.mk run-only`
+make -f qemu_v8.mk run-only
+```
 #### 1.2.2 TrustZone和ATF功能概述
 TrustZone对系统实现了硬件隔离，将系统资源分成安全和非安全两种类型，同时在系统总线上增加安全读写信号位，通过读取安全读写信号位 电平来确定当前处理器的工作状态，从而判断是否具有该资源的访问权限．因此，TrustZone从硬件级别实现了对系统资源的保护．
 ![Alt text](_static/trustzone_hardware.png)

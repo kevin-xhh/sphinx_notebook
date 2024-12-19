@@ -11,6 +11,7 @@ Bsp开发小记
    :caption: Contents:
 
    TEE.md
+   uboot.md
 
 Indices and tables
 ==================
