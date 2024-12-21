@@ -1,3 +1,7 @@
 "[markdown]": {
   "files.trimTrailingWhitespace": false
+},
+"[restructuredtext]": {
+  "files.trimTrailingWhitespace": false,
+  "editor.formatOnSave": false
 }

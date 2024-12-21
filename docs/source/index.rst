@@ -8,10 +8,10 @@ Bsp开发小记
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
+   :numbered:
 
-   TEE.md
-   uboot.md
+   tee/index.rst
+   u-boot/index.rst
 
 Indices and tables
 ==================
