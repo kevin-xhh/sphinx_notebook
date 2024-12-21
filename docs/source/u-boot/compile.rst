@@ -23,7 +23,7 @@ xxx_defconfig依赖检查更新
 
 在编译uboot时首先执行make xxx_defconfig生成.config文件。uboot根目录中Makefile中有唯一的规则目标
 
-::
+.. code-block:: make
 
   config: scripts_basic outputmakefile FORCE
     $(Q)$(MAKE) $(build)=scripts/kconfig $@
@@ -33,7 +33,7 @@ xxx_defconfig依赖检查更新
 
 build 在 scripts/Kbuild.include 中定义
 
-::
+.. code-block:: make
 
   build := -f $(srctree)/scripts/Makefile.build obj
 
@@ -47,7 +47,7 @@ build 在 scripts/Kbuild.include 中定义
 
 目标xxx_defconfig的生成依赖于scripts_basic，outputmakefile和FORCE,只有scripts_basic需要执行命令
 
-::
+.. code-block:: make
 
   # Basic helpers built in scripts/
   PHONY += scripts_basic
@@ -60,7 +60,7 @@ build 在 scripts/Kbuild.include 中定义
 
 事实上大量实际目标的编译都是调用scripts/Makefile.build完成的，文件scripts/Makefile.build的开头会根据传入的obj=scripts/basic参数设置src=sripts/basic
 
-::
+.. code-block:: make
 
   # Modified for U-Boot
   prefix := tpl
@@ -75,7 +75,7 @@ build 在 scripts/Kbuild.include 中定义
 
 kbuild-dir根据src变量(等于obj变量)是绝对路径还是相对路径来确定当前编译的目录，若为绝对路径则该目录即src变量的值，若为相对路径则该变量就是src相对于源码根目录的目录。kbuild-file即 在该目录下查找kbuild文件，若能找到则使用kbuild作为该目录的编译文件，若找不到则使用该目录下的Makefile作为该目录的编译文件，然后将该文件包含进来
 
-::
+.. code-block:: make
 
   # The filename Kbuild has precedence over Makefile
   kbuild-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
@@ -84,13 +84,13 @@ kbuild-dir根据src变量(等于obj变量)是绝对路径还是相对路径来�
 
 这里展开替换后相当于
 
-::
+.. code-block:: make
 
   include ./scripts/basic/Makefile
 
 文件scripts/basic/Makefile中定义了编译在主机上执行的工具fixdep
 
-::
+.. code-block:: make
 
   # fixdep:        Used to generate dependency information during build process
 
@@ -102,13 +102,13 @@ kbuild-dir根据src变量(等于obj变量)是绝对路径还是相对路径来�
 
 fixdep用于更新每一个生成目标的依赖文件*.cmd。上面定义的这个$(always)在scripts/Makefile.build里会被添加到targets中
 
-::
+.. code-block:: make
 
   targets += $(extra-y) $(MAKECMDGOALS) $(always)
 
 简而言之，scripts_basic的规则是
 
-::
+.. code-block:: make
 
   scripts_basic:
     make -f ./scripts/Makefile.build obj=scripts/basic
@@ -117,7 +117,7 @@ fixdep用于更新每一个生成目标的依赖文件*.cmd。上面定义的这
 
 **outputmakefile依赖**
 
-::
+.. code-block:: make
 
     PHONY += outputmakefile
     # outputmakefile generates a Makefile in the output directory, if using a
@@ -134,7 +134,7 @@ fixdep用于更新每一个生成目标的依赖文件*.cmd。上面定义的这
 
 **FORCE依赖**
 
-::
+.. code-block:: make
 
   PHONY += FORCE
   FORCE:
@@ -146,14 +146,14 @@ xxx_defconfig目标命令执行
 
 完成对xxx_defconfig的依赖更新后，接下来就是执行对顶层目标的命令完成对xxx_defconfig的更新,也就是执行以下命令
 
-::
+.. code-block:: make
 
   xxx_defconfig: scripts_basic outputmakefile FORCE
     make -f ./scripts/Makefile.build obj=scripts/kconfig xxx_defconfig
 
 这个命令会转到srcipts/Makefile.kbuild去执行,文件scripts/Makefile.kbuild的开头会根据传入的obj=scripts/kconfig参数设置src=scripts/kconfig, 然后搜寻$(srctree)/$(src)子目录下的makefile， 由于src=scripts/kconfig参数不用于第一次调用的参数(src=scripts/basic)此处包含的makefile也不用于第一次的makefile了
 
-::
+.. code-block:: make
 
   # The filename Kbuild has precedence over Makefile
   kbuild-dir := $(if $(filter /%,$(src)),$(src),$(srctree)/$(src))
@@ -162,13 +162,13 @@ xxx_defconfig目标命令执行
 
 这里展开后相当于
 
-::
+.. code-block:: make
 
   include ./scripts/kconfig/Makefile
 
 文件scripts/kconfig/Makefile中定义了所有匹配%config的目标
 
-::
+.. code-block:: make
 
   PHONY += xconfig gconfig menuconfig config syncconfig update-po-config \
   %_defconfig: $(obj)/conf
@@ -176,14 +176,14 @@ xxx_defconfig目标命令执行
 
 展开为
 
-::
+.. code-block:: make
 
   xxx_defconfig: scripts/kconfig/conf
     scripts/kconfig/conf --defconfig=arch/arm/configs/xxx_defconfig Kconfig
 
 此处xxx_defconfig依赖scripts/kconfig/conf,接下来检查并生成依赖
 
-::
+.. code-block:: make
 
   hostprogs-y := conf nconf mconf kxgettext qconf gconf
   conf-objs   := conf.o  zconf.tab.o
@@ -203,7 +203,7 @@ make执行流程分析
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 从顶层的Makefile开始查找，找到第一个目标为_all
-::
+.. code-block:: make
 
   PHONY := _all
   _all:
@@ -219,7 +219,7 @@ make执行流程分析
 
 接着往下分析,all自身依赖于$(ALL-y)
 
-::
+.. code-block:: make
 
   all:                $(ALL-y) cfg
   ifeq ($(CONFIG_DM_I2C_COMPAT)$(CONFIG_SANDBOX),y)
@@ -236,7 +236,7 @@ make执行流程分析
 
 **目标$(ALL-y)**
 
-::
+.. code-block:: make
 
   # Always append ALL so that arch config.mk's can add custom ones
   ALL-y += u-boot.srec u-boot.bin u-boot.sym System.map binary_size_check
@@ -302,7 +302,7 @@ make执行流程分析
 
 **$(ALL-y)依赖u-boot.srec**
 
-::
+.. code-block:: make
 
   u-boot.hex u-boot.srec: u-boot FORCE
     $(call if_changed,objcopy)
@@ -310,7 +310,7 @@ make执行流程分析
 
 **$(ALL-y)依赖u-boot.bin**
 
-::
+.. code-block:: make
 
   ifeq ($(CONFIG_MULTI_DTB_FIT),y)
 
@@ -352,7 +352,7 @@ make执行流程分析
 
 u-boot-nodtb.bin的依赖关系以及执行命令如下
 
-::
+.. code-block:: make
 
   u-boot-nodtb.bin: u-boot FORCE
     $(call if_changed,objcopy)
@@ -361,14 +361,14 @@ u-boot-nodtb.bin的依赖关系以及执行命令如下
 
 命令中if_changed函数定义在scripts/Kbuild.include文件中,顶层Makefile中通过以下命令包含
 
-::
+.. code-block:: make
 
   scripts/Kbuild.include: ;
   include scripts/Kbuild.include
 
 if_changed函数定义如下
 
-::
+.. code-block:: make
 
   if_changed = $(if $(strip $(any-prereq) $(arg-check)),                       \
     @set -e;                                                             \
@@ -378,7 +378,7 @@ if_changed函数定义如下
 
 该命令外层是一个if函数，然后又内嵌了一个strip函数
 
-::
+.. code-block:: make
 
   OBJCOPY             = $(CROSS_COMPILE)objcopy
 
@@ -397,21 +397,21 @@ if_changed函数定义如下
 
 **$(ALL-y)依赖u-boot.sym**
 
-::
+.. code-block:: make
 
   u-boot.sym: u-boot FORCE
     $(call if_changed,sym)
 
 **$(ALL-y)依赖System.map**
 
-::
+.. code-block:: make
 
   System.map: u-boot
         @$(call SYSTEM_MAP,$<) > $@
 
 **$(ALL-y)依赖u-boot.cfg**
 
-::
+.. code-block:: make
 
   u-boot.cfg spl/u-boot.cfg tpl/u-boot.cfg: include/config.h FORCE
       $(Q)$(MAKE) -f $(srctree)/scripts/Makefile.autoconf $(@)
@@ -420,7 +420,7 @@ include/config.h在make xxx_defconfig时创建,include/config.h文件中会包�
 
 **$(ALL-y)依赖binary_size_check**
 
-::
+.. code-block:: make
 
   binary_size_check: u-boot-nodtb.bin FORCE
       @file_size=$(shell wc -c u-boot-nodtb.bin | awk '{print $$1}') ; \
@@ -444,7 +444,7 @@ u-boot目标编译
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 u-boot目标依赖及执行命令如下
 
-::
+.. code-block:: make
 
   u-boot:     $(u-boot-init) $(u-boot-main) u-boot.lds FORCE
       +$(call if_changed,u-boot__)
@@ -455,7 +455,7 @@ u-boot目标依赖及执行命令如下
 
 其中u-boot-init和u-boot-main被定义为
 
-::
+.. code-block:: make
 
   u-boot-init := $(head-y)
   u-boot-main := $(libs-y)
@@ -464,7 +464,7 @@ u-boot目标依赖及执行命令如下
 
 head-y 在arch/arm/Makefile中定义
 
-::
+.. code-block:: make
 
   head-y := arch/arm/cpu/$(CPU)/start.o
 
@@ -472,7 +472,7 @@ head-y 在arch/arm/Makefile中定义
 
 在顶层目录Makefile中搜索libs-y可以发现其包含许多目录
 
-::
+.. code-block:: make
 
   libs-y += lib/
   libs-$(HAVE_VENDOR_COMMON_LIB) += board/$(VENDOR)/common/
@@ -524,7 +524,7 @@ head-y 在arch/arm/Makefile中定义
 
 另外libs-y还有如下规则定义
 
-::
+.. code-block:: make
 
   libs-y += $(if $(BOARDDIR),board/$(BOARDDIR)/)
 
@@ -534,7 +534,7 @@ head-y 在arch/arm/Makefile中定义
 
 这条规则使得libs-y中的每个条目的最后一个斜杠替换成/built-in.o，可见libs-y被定义为各层驱动目录下built-in.o的集合，而这些built-in.o则由kbuild makefile将obj-y所 包含的各个文件编译而成，具体可以研究 scripts/Kbuild.include 和 scripts/Makefile.build
 
-::
+.. code-block:: make
 
   ifneq ($(strip $(obj-y) $(obj-m) $(obj-) $(subdir-m) $(lib-target)),)
   builtin-target := $(obj)/built-in.o
@@ -582,7 +582,7 @@ prepare编译
 
 实际上prepare是一些列prepare伪目标和动作的组合，完成编译前的准备工作
 
-::
+.. code-block:: make
 
   # Listed in dependency order
   PHONY += prepare archprepare prepare0 prepare1 prepare2 prepare3
@@ -617,7 +617,7 @@ prepare编译
 
 在prepare1的依赖列表中，除了include/config/auto.conf之外，还有$(version_h)和$(timestamp_h),他们的依赖关系如下
 
-::
+.. code-block:: make
 
   $(version_h): include/config/uboot.release FORCE
       $(call filechk,version.h)
@@ -627,14 +627,14 @@ prepare编译
 
 对于位于最后的prepare3的依赖include/config/uboot.release它还有下级依赖
 
-::
+.. code-block:: make
 
   include/config/uboot.release: include/config/auto.conf FORCE
       $(call filechk,uboot.release)
 
 对于include/config/auto.conf，Makefile还有一个匹配规则
 
-::
+.. code-block:: make
 
   include/config/%.conf: $(KCONFIG_CONFIG) include/config/auto.conf.cmd
       $(Q)$(MAKE) -f $(srctree)/Makefile syncconfig
@@ -660,7 +660,7 @@ include/config/auto.conf依赖于$(KCONFIG_CONFIG)和include/config/auto.conf.cm
 
 此处进行函数定义
 
-::
+.. code-block:: make
 
   ##scripts/Kbuild.include文件中
   define filchk
@@ -676,9 +676,9 @@ include/config/auto.conf依赖于$(KCONFIG_CONFIG)和include/config/auto.conf.cm
       fi
   endef
 
-具体的文件生成则在以下文件中实现
+具体的文件生成规则在以下文件中实现
 
-::
+.. code-block:: make
 
   # scripts/Makefile.autoconf文件中
   # Prior to Kconfig, it was generated by mkconfig. Now it is created here.
