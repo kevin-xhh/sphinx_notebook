@@ -12,6 +12,8 @@ Bsp开发小记
 
    tee/index.rst
    u-boot/index.rst
+   kernel/index.rst
+   user/index.rst
 
 Indices and tables
 ==================

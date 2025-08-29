@@ -1,0 +1,12 @@
+3.1 clock framework
+3.2 Regulator framework
+3.3 Power domain framework
+3.4 Reset framework
+3.5 Opp framework
+3.6 Runtime pm
+3.7 Device dvfs
+3.8 system suspend&resume
+3.9 Cpu idle
+3.10 Cpu dvfs
+3.11 Cpu hotplug
+3.12 Pm qos
